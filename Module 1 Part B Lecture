@@ -1,0 +1,113 @@
+/* Program name: jbtictactoe.cpp
+* Author: John Doe
+* Date last updated: 5/1/2017
+* Purpose: Play the game of Tic-Tac-Toe
+*/
+#include <iostream>
+using namespace std;
+
+// Function prototypes
+void displayBoard(char board[3][3]);
+bool makeMove(char board[3][3], int row, int col, char player);
+bool checkWin(char board[3][3], char player);
+bool checkDraw(char board[3][3]);
+
+int main() {
+    // Initialize the 3x3 Tic-Tac-Toe board with empty spaces
+    char board[3][3] = { {' ', ' ', ' '},
+                         {' ', ' ', ' '},
+                         {' ', ' ', ' '} };
+
+    char currentPlayer = 'X'; // Player X always starts first
+    bool gameOver = false;
+    int row, col;
+
+    cout << "Welcome to Tic-Tac-Toe!" << endl;
+    displayBoard(board);
+
+    // Game loop continues until someone wins or it's a draw
+    while (!gameOver) {
+        cout << "\nPlayer " << currentPlayer << ", enter your move (row and column: 0-2): ";
+        cin >> row >> col;
+
+        // Validate input
+        if (row < 0 || row > 2 || col < 0 || col > 2) {
+            cout << "Invalid move. Try again." << endl;
+            continue;
+        }
+
+        // Try to make the move
+        if (!makeMove(board, row, col, currentPlayer)) {
+            cout << "That spot is already taken! Try again." << endl;
+            continue;
+        }
+
+        displayBoard(board);
+
+        // Check if the current player won
+        if (checkWin(board, currentPlayer)) {
+            cout << "Player " << currentPlayer << " wins!" << endl;
+            gameOver = true;
+        }
+        // Check for a draw
+        else if (checkDraw(board)) {
+            cout << "It's a draw!" << endl;
+            gameOver = true;
+        }
+        // Switch player turns
+        else {
+            currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
+        }
+    }
+
+    cout << "Game over. Thanks for playing!" << endl;
+    return 0;
+}
+
+// Function to display the board
+void displayBoard(char board[3][3]) {
+    cout << "\n  0   1   2" << endl;
+    for (int i = 0; i < 3; i++) {
+        cout << i << " ";
+        for (int j = 0; j < 3; j++) {
+            cout << board[i][j];
+            if (j < 2) cout << " | ";
+        }
+        cout << endl;
+        if (i < 2) cout << " ---+---+---" << endl;
+    }
+}
+
+// Function to make a move on the board
+bool makeMove(char board[3][3], int row, int col, char player) {
+    if (board[row][col] != ' ')
+        return false;
+    board[row][col] = player;
+    return true;
+}
+
+// Function to check if the current player has won
+bool checkWin(char board[3][3], char player) {
+    // Check rows and columns
+    for (int i = 0; i < 3; i++) {
+        if ((board[i][0] == player && board[i][1] == player && board[i][2] == player) || 
+            (board[0][i] == player && board[1][i] == player && board[2][i] == player))
+            return true;
+    }
+
+    // Check diagonals
+    if ((board[0][0] == player && board[1][1] == player && board[2][2] == player) ||
+        (board[0][2] == player && board[1][1] == player && board[2][0] == player))
+        return true;
+
+    return false;
+}
+
+// Function to check if the board is full (draw)
+bool checkDraw(char board[3][3]) {
+    for (int i = 0; i < 3; i++)
+        for (int j = 0; j < 3; j++)
+            if (board[i][j] == ' ')
+                return false;
+    return true;
+}
